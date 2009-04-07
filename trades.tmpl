@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <title>Prediction Market Available Trades</title>
+ <link href="http://predmarket.appspot.com/trades" rel="self" />
+ <updated>{% now "Y-m-d\TH:M:S\Z" %}</updated>
+ <id>http://predmarket.appspot.com/trades</id>
+ {% for trade in trades %}{% if trade.unresolved %}
+ <entry>
+  <title>{{ trade.ticker|escape }} {{ trade.type }} {{ trade.amount }}x @${{ trade.price }}</title>
+  <updated>{{ trade.updated|date:"Y-m-d\TH:M:S\Z" }}</updated>
+  <summary type="html">{{ trade.owner|escape }} wants to {{ trade.type }} {{trade.amount }} of {{trade.ticker|escape }}({{trade.name|escape}}) for {{trade.bundle}} at ${{trade.price}} each</summary>
+ </entry>
+ {% endif %}{% endfor %}
+</feed>

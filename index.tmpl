@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+ <title>Prediction Market - {{ player.name }}</title>
+</head>
+<body>
+<h1>Prediction Market - {{ player.name }}</h1>
+<strong>Balance:</strong> ${{player.balance}}<br>
+{% if player.admin %}<a href="/newbundle">ADMIN: Create new bundle...</a>{% endif %}
+<table>
+<tr>
+ <th colspan=2>Stock</th>
+ <th>Amount</th>
+ <th>Est Value</th>
+ <th>Total Est Value</th>
+</tr>
+{% for bundle in bundles %}
+<tr>
+ <th colspan=2 style="text-align: left; padding-top: 3pt"><a href="/bundle?bundle={{bundle.name|escape}}">{{bundle.title|escape}}</a>{% if player.admin and not bundle.resolved %}(<a href="/resolve?bundle={{bundle.name|escape}}">ADMIN: Resolve</a>){% endif %}</th>
+ <th colspan=2></th>
+</tr>
+{% for stock in bundle.stock %}
+<tr>
+ <th><strong> + </strong></th>
+ <td style="text-align: left{% if stock.resolved %}; color: #0A0{% endif %}">{{ stock.title }}</td>
+ <td style="text-align: right">{{ stock.amount }}</td>
+ <td style="text-align: right">${{ stock.estvalue }}</td>
+ <td style="text-align: right">${{ stock.totestvalue }}</td>
+{% ifequal forloop.revcounter 1 %}<td style="text-align: right; border-bottom: thin black solid">${{ bundle.total }}</td>{% endifequal %}
+</tr>
+{% endfor %}
+{% endfor %}
+<tr>
+ <td colspan="2" style="text-align: right"><strong>Total:</strong></td>
+ <td colspan="4" style="text-align: right">${{ total }}</td>
+</tr>
+</table>
+</body>
+</html>

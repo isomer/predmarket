@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+ <title>{{ bundle.name|escape }}: {{bundle.title|escape}}</title>
+</head>
+<body>
+<h1>{{ bundle.name|escape }}: {{bundle.title|escape}}</h1>
+<a href="/">Back to stock list</a><br>
+{% if player.name %}<strong>Balance</strong>: ${{ player.balance }}<br>{% endif %}
+<ul>
+{% for stock in bundle.stocks %}
+ <li> <a href="#{{stock.name|escape}}">{{stock.name|escape}}: {{stock.title|escape}}</a></li>
+{% endfor %}
+</ul>
+<p> {{ bundle.description|escape }}</p>
+<form method="POST">
+{% if player.afford_bundle and not bundle.resolved %}
+Buy <input type="text" name="amount" size=3> Bundles @$100 each.<br>
+{% endif %}
+<input type="submit" value="Make Trades">
+{% for stock in bundle.stocks %}
+<h2{% if stock.resolved %} style="color: #0A0"{% endif %} id="{{stock.name|escape}}">{{stock.title|escape}}</h2>
+{% if stock.owned %}
+ <strong>Owned</strong>: {{stock.owned}}<br>
+{% else %}
+ <strong>Owned</strong>: None.<br>
+{% endif %}
+<p>{{ stock.description|escape }}</p>
+{% if not bundle.resolved %}
+<table style="border-collapse: collapse">
+<tr style="border-bottom: thin black solid"><th>Who</th><th>Buy/Sell</th><th>Count</th><th>Price</th><th> <th></tr>
+{% for trade in stock.trades %}
+<tr>
+ <th style="background: {% cycle #ccc,#fff %}">{{ trade.nickname }}</th>
+ <td style="background: {% cycle #ccc,#fff %}">{{ trade.type }}</td>
+ <td style="background: {% cycle #ccc,#fff %}; text-align: right">{{ trade.magnitude }}</td>
+ <td style="background: {% cycle #ccc,#fff %}; text-align: right">@${{ trade.price }} each</td>
+{% if player.name %}
+ {% ifequal player.name trade.nickname %}
+ <td style="background: {% cycle #ccc,#fff %}"><input type="checkbox" name="{{trade.id}}_withdraw"> withdraw offer</td>
+ {% else %}
+ <td style="background: {% cycle #ccc,#fff %}"><input type="text" size="3" name="{{trade.id}}"></td>
+ {% endifequal %}
+{% endif %}
+</tr>
+{% endfor %}
+{% if player.name and not bundle.resolved %}
+<tr>
+ <td>{{ player.name|escape }}</td>
+ <td>
+  <select name="{{ stock.name }}_buy_sell">
+   <option value="buy">Buy</option>
+   <option value="sell">Sell</option>
+  </select>
+ </td>
+ <td><input type="text" name="{{ stock.name }}_amount" size=3></td>
+ <td>@<input type="text" name="{{ stock.name }}_price" size=3>each</td>
+</tr>
+{% endif %}
+</table>
+<input type="submit" value="Make Trades">
+{% endif %}
+{% endfor %}
+</form>
+</body>
+</html>
